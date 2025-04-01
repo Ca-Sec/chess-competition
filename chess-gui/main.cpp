@@ -28,6 +28,9 @@ EM_JS(int, canvas_get_height, (), { return canvas.height; });
 #include <chrono>
 #include <map>
 
+//#include "board.h"
+//#include "piece.h"
+
 enum class SimulationState {
   PAUSED,
   RUNNING,
