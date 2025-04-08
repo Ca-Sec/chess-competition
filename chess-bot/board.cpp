@@ -27,6 +27,7 @@ void Board::parseBoardPosition(const std::string& position) {
     static const std::unordered_map<char, SquareContent> pieceMap = {
         {'P', SquareContent::WHITE_PAWN}, {'p', SquareContent::BLACK_PAWN},
         {'R', SquareContent::WHITE_ROOK}, {'r', SquareContent::BLACK_ROOK},
+        {'N', SquareContent::WHITE_KNIGHT}, {'n', SquareContent::BLACK_KNIGHT},
         {'B', SquareContent::WHITE_BISHOP}, {'b', SquareContent::BLACK_BISHOP},
         {'K', SquareContent::WHITE_KING}, {'k', SquareContent::BLACK_KING},
         {'Q', SquareContent::WHITE_QUEEN}, {'q', SquareContent::BLACK_QUEEN}

@@ -3,6 +3,10 @@
 // https://github.com/Disservin/chess-library
 #include "chess.hpp"
 #include <random>
+
+#include "board.h"
+#include "piece.h"
+
 using namespace ChessSimulator;
 
 std::string ChessSimulator::Move(std::string fen) {
@@ -12,6 +16,8 @@ std::string ChessSimulator::Move(std::string fen) {
   // and have better results return the best move in UCI notation you will gain
   // extra points if you create your own board/move representation instead of
   // using the one provided by the library
+    
+  Board myBoard(fen);
 
   // here goes a random movement
   chess::Board board(fen);
