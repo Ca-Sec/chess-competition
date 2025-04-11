@@ -75,17 +75,13 @@ void Board::setPiece(uint8_t index, SquareContent piece) {
     }
 }
 
-//std::vector<Piece*> Board::getPieces() const {
-//    std::vector<Piece*> pieces;
-//
-//    for (int row = 0; row < 8; row++) {
-//        for (int col = 0; col < 8; col++) {
-//            Piece* piece = getPieceAt(row, col);
-//            if (piece) {
-//                pieces.push_back(piece);
-//            }
-//        }
-//    }
-//
-//    return pieces;
-//}
+std::string Board::getMoveNotation(int fromRow, int fromCol, int toRow, int toCol) const {
+    auto toCoord = [](int row, int col) {
+        std::string result;
+        result += static_cast<char>('a' + col);
+        result += static_cast<char>('1' + row);
+        return result;
+        };
+
+    return toCoord(fromRow, fromCol) + toCoord(toRow, toCol);
+}

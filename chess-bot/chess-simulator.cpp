@@ -18,18 +18,20 @@ std::string ChessSimulator::Move(std::string fen) {
   // using the one provided by the library
     
   Board myBoard(fen);
+  std::string myMove = Piece::getRandomMove(myBoard);
+  return myMove;
 
   // here goes a random movement
-  chess::Board board(fen);
-  chess::Movelist moves;
-  chess::movegen::legalmoves(moves, board);
-  if(moves.size() == 0)
-    return "";
+  //chess::Board board(fen);
+  //chess::Movelist moves;
+  //chess::movegen::legalmoves(moves, board);
+  //if(moves.size() == 0)
+  //  return "";
 
-  // get random move
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dist(0, moves.size() - 1);
-  auto move = moves[dist(gen)];
-  return chess::uci::moveToUci(move);
+  //// get random move
+  //std::random_device rd;
+  //std::mt19937 gen(rd());
+  //std::uniform_int_distribution<> dist(0, moves.size() - 1);
+  //auto move = moves[dist(gen)];
+  //return chess::uci::moveToUci(move);
 }

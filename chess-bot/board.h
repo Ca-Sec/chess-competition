@@ -25,7 +25,14 @@ public:
     explicit Board(std::string fen);
     ~Board();
 
-    //std::vector<Piece*> getPieces() const;
+    SquareContent getPieceAt(int row, int col) const {
+        if (row < 0 || row > 7 || col < 0 || col > 7) return SquareContent::EMPTY;
+        return board[row * 8 + col];
+    };
+
+    PieceColor getTurn() const { return turn; };
+
+    std::string getMoveNotation(int fromRow, int fromCol, int toRow, int toCol) const;
 
 private:
     void parseBoardPosition(const std::string& position);

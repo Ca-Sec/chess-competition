@@ -17,7 +17,7 @@ public:
     virtual ~Piece() = default;
 
     virtual std::vector<std::pair<int, int>> getLegalMoves(const Board& board) const = 0;
-    std::pair<int, int> getRandomMove(const Board& board) const;
+    static std::string getRandomMove(const Board& board);
 };
 
 #endif
