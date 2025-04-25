@@ -17,21 +17,28 @@ std::string ChessSimulator::Move(std::string fen) {
   // extra points if you create your own board/move representation instead of
   // using the one provided by the library
     
-  Board myBoard(fen);
+  /*Board myBoard(fen);
   std::string myMove = Piece::getRandomMove(myBoard);
-  return myMove;
+  return myMove;*/
 
-  // here goes a random movement
-  //chess::Board board(fen);
-  //chess::Movelist moves;
-  //chess::movegen::legalmoves(moves, board);
-  //if(moves.size() == 0)
-  //  return "";
+  ////here goes a random movement
+  chess::Board board(fen);
+  chess::Movelist moves;
+  chess::movegen::legalmoves(moves, board);
+  if(moves.size() == 0)
+    return "";
+
+  std::vector<std::string> uciMoves;
+
+  for (int i = 0; i <= moves.size() - 1; i++)
+  {
+      uciMoves.push_back(chess::uci::moveToUci(moves[i]));
+  }
 
   //// get random move
-  //std::random_device rd;
-  //std::mt19937 gen(rd());
-  //std::uniform_int_distribution<> dist(0, moves.size() - 1);
-  //auto move = moves[dist(gen)];
-  //return chess::uci::moveToUci(move);
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dist(0, moves.size() - 1);
+  auto move = moves[dist(gen)];
+  return chess::uci::moveToUci(move);
 }
