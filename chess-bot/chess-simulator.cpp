@@ -6,6 +6,7 @@
 
 #include "board.h"
 #include "piece.h"
+#include "MinMaxBot.h"
 
 using namespace ChessSimulator;
 
@@ -22,23 +23,26 @@ std::string ChessSimulator::Move(std::string fen) {
   return myMove;*/
 
   ////here goes a random movement
-  chess::Board board(fen);
-  chess::Movelist moves;
-  chess::movegen::legalmoves(moves, board);
-  if(moves.size() == 0)
-    return "";
+  //chess::Board board(fen);
+  //chess::Movelist moves;
+  //chess::movegen::legalmoves(moves, board);
+  //if(moves.size() == 0)
+  //  return "";
 
-  std::vector<std::string> uciMoves;
+  //std::vector<std::string> uciMoves;
 
-  for (int i = 0; i <= moves.size() - 1; i++)
-  {
-      uciMoves.push_back(chess::uci::moveToUci(moves[i]));
-  }
+  //for (int i = 0; i <= moves.size() - 1; i++)
+  //{
+  //    uciMoves.push_back(chess::uci::moveToUci(moves[i]));
+  //}
 
-  //// get random move
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dist(0, moves.size() - 1);
-  auto move = moves[dist(gen)];
-  return chess::uci::moveToUci(move);
+  ////// get random move
+  //std::random_device rd;
+  //std::mt19937 gen(rd());
+  //std::uniform_int_distribution<> dist(0, moves.size() - 1);
+  //auto move = moves[dist(gen)];
+  //return chess::uci::moveToUci(move);
+
+    MinMaxBot bot(3);
+    return bot.getBestMove(fen);
 }
