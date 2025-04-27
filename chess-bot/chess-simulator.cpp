@@ -4,8 +4,8 @@
 #include "chess.hpp"
 #include <random>
 
-#include "board.h"
-#include "piece.h"
+//#include "board.h"
+//#include "piece.h"
 #include "MinMaxBot.h"
 
 using namespace ChessSimulator;
@@ -43,6 +43,6 @@ std::string ChessSimulator::Move(std::string fen) {
   //auto move = moves[dist(gen)];
   //return chess::uci::moveToUci(move);
 
-    MinMaxBot bot(3);
+    MinMaxBot bot(6);
     return bot.getBestMove(fen);
 }

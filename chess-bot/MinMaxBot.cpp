@@ -7,6 +7,7 @@ MinMaxBot::MinMaxBot(int depth)
 	: m_depth(depth)
 { }
 
+// Move Ordering Attempt
 int MinMaxBot::evaluateMove(const chess::Move& move, const chess::Board& board)
 {
 	chess::Board tempBoard = board;
@@ -14,6 +15,7 @@ int MinMaxBot::evaluateMove(const chess::Move& move, const chess::Board& board)
 	return evaluateBoard(tempBoard);
 }
 
+// Tries to find best move out of all current legal moves
 std::string MinMaxBot::getBestMove(const std::string& fen)
 {
 	chess::Board board(fen);
@@ -26,10 +28,12 @@ std::string MinMaxBot::getBestMove(const std::string& fen)
 	int bestScore = -100000;
 	chess::Move bestMove;
 
+	// Returns moves in the "best" move order
 	std::sort(moves.begin(), moves.end(), [&](const chess::Move& move1, const chess::Move& move2) {
 		return evaluateMove(move1, board) > evaluateMove(move2, board);
 		});
 
+	// Runs through all current legal moves with MinMax
 	for (auto move : moves)
 	{
 		board.makeMove(move);
@@ -46,15 +50,16 @@ std::string MinMaxBot::getBestMove(const std::string& fen)
 	return chess::uci::moveToUci(bestMove);
 }
 
+// MinMax Algorithm using alpha-beta prunning
 int MinMaxBot::minimax(chess::Board& board, int depth, bool maximizingPlay, int alpha, int beta)
 {
 	if (depth == 0 || board.isGameOver().first != chess::GameResultReason::NONE)
-		return 0;
+		return evaluateBoard(board);
 
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
 
-	if (maximizingPlay)
+	if (maximizingPlay) // Maximizing Move
 	{
 		int maxEval = -100000;
 		for (auto move : moves)
@@ -68,7 +73,7 @@ int MinMaxBot::minimax(chess::Board& board, int depth, bool maximizingPlay, int 
 		}
 		return maxEval;
 	}
-	else
+	else // Minimizing Move
 	{
 		int minEval = 100000;
 		for (auto move : moves)
@@ -84,10 +89,13 @@ int MinMaxBot::minimax(chess::Board& board, int depth, bool maximizingPlay, int 
 	}
 }
 
+// Basic Heuristic
+// TO DO: Improve heuristic to make the bot smarter
 int MinMaxBot::evaluateBoard(const chess::Board& board)
 {
 	int score = 0;
 
+	// Runs through all squares of the board
 	for (auto sq = chess::Square(chess::Square::underlying::SQ_A1); sq < chess::Square(chess::Square::underlying::SQ_H8); sq++)
 	{
 		auto piece = board.at(sq);
@@ -110,5 +118,5 @@ int MinMaxBot::evaluateBoard(const chess::Board& board)
 		else
 			score -= value;
 	}
-	return(board.sideToMove() == chess::Color::WHITE) ? score : -score;
+	return(board.sideToMove() == chess::Color::WHITE) ? score : -score; // Score doesn't return what I thought it would, will need to fix
 }
