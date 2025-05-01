@@ -18,6 +18,8 @@ int MinMaxBot::evaluateMove(const chess::Move& move, const chess::Board& board)
 // Tries to find best move out of all current legal moves
 std::string MinMaxBot::getBestMove(const std::string& fen)
 {
+	m_transpositionTable.clear();
+
 	chess::Board board(fen);
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
@@ -53,40 +55,59 @@ std::string MinMaxBot::getBestMove(const std::string& fen)
 // MinMax Algorithm using alpha-beta prunning
 int MinMaxBot::minimax(chess::Board& board, int depth, bool maximizingPlay, int alpha, int beta)
 {
+	uint64_t hash = board.zobrist();
+
+	auto it = m_transpositionTable.find(hash);
+	if (it != m_transpositionTable.end())
+	{
+		TTEntry& entry = it->second;
+		if (entry.depth >= depth)
+		{
+			if (entry.type == NodeType::EXACT)
+				return entry.score;
+			else if (entry.type == NodeType::LOWER && entry.score > alpha)
+				alpha = entry.score;
+			else if (entry.type == NodeType::UPPER && entry.score < beta)
+				beta = entry.score;
+
+			if (alpha >= beta)
+				return entry.score;
+		}
+	}
+
 	if (depth == 0 || board.isGameOver().first != chess::GameResultReason::NONE)
 		return evaluateBoard(board);
 
 	chess::Movelist moves;
 	chess::movegen::legalmoves(moves, board);
 
-	if (maximizingPlay) // Maximizing Move
+	int bestScore = maximizingPlay ? -100000 : 100000;
+
+	for (auto move : moves)
 	{
-		int maxEval = -100000;
-		for (auto move : moves)
-		{
-			board.makeMove(move);
-			int eval = minimax(board, depth - 1, false, alpha, beta);
-			board.unmakeMove(move);
-			maxEval = std::max(maxEval, eval);
+		board.makeMove(move);
+		int eval = minimax(board, depth - 1, !maximizingPlay, alpha, beta);
+		board.unmakeMove(move);
+
+		if (maximizingPlay) {
+			bestScore = std::max(bestScore, eval);
 			alpha = std::max(alpha, eval);
-			if (beta <= alpha) break;
 		}
-		return maxEval;
-	}
-	else // Minimizing Move
-	{
-		int minEval = 100000;
-		for (auto move : moves)
-		{
-			board.makeMove(move);
-			int eval = minimax(board, depth - 1, true, alpha, beta);
-			board.unmakeMove(move);
-			minEval = std::min(minEval, eval);
+		else {
+			bestScore = std::min(bestScore, eval);
 			beta = std::min(beta, eval);
-			if (beta <= alpha) break;
 		}
-		return minEval;
+
+		if (beta <= alpha) break;
 	}
+
+	NodeType type;
+	if (bestScore <= alpha) type = NodeType::UPPER;
+	else if (bestScore >= beta) type = NodeType::LOWER;
+	else type = NodeType::EXACT;
+
+	m_transpositionTable[hash] = { bestScore, depth, type };
+	return bestScore;
 }
 
 // Basic Heuristic

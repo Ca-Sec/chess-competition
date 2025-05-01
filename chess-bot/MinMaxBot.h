@@ -1,6 +1,15 @@
 #pragma once
 #include <string>
+#include <unordered_map>
 #include "chess.hpp"
+
+enum class NodeType { EXACT, LOWER, UPPER };
+
+struct TTEntry {
+	int score;
+	int depth;
+	NodeType type;
+};
 
 class MinMaxBot
 {
@@ -14,4 +23,5 @@ private:
 	int evaluateMove(const chess::Move& move, const chess::Board& board);
 
 	int m_depth;
+	std::unordered_map<uint64_t, TTEntry> m_transpositionTable;
 };
