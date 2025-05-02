@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <chrono>
 #include "chess.hpp"
 
 enum class NodeType { EXACT, LOWER, UPPER };
@@ -24,4 +25,7 @@ private:
 
 	int m_depth;
 	std::unordered_map<uint64_t, TTEntry> m_transpositionTable;
+
+	std::chrono::steady_clock::time_point m_startTime;
+	int m_timeLimitMillis = 9750;
 };

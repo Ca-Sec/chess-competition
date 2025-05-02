@@ -19,6 +19,7 @@ int MinMaxBot::evaluateMove(const chess::Move& move, const chess::Board& board)
 std::string MinMaxBot::getBestMove(const std::string& fen)
 {
 	m_transpositionTable.clear();
+	m_startTime = std::chrono::steady_clock::now();
 
 	chess::Board board(fen);
 	chess::Movelist moves;
@@ -47,6 +48,10 @@ std::string MinMaxBot::getBestMove(const std::string& fen)
 			bestScore = score;
 			bestMove = move;
 		}
+
+		auto now = std::chrono::steady_clock::now();
+		if (std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count() > m_timeLimitMillis)
+			break;
 	}
 
 	return chess::uci::moveToUci(bestMove);
@@ -55,6 +60,10 @@ std::string MinMaxBot::getBestMove(const std::string& fen)
 // MinMax Algorithm using alpha-beta prunning
 int MinMaxBot::minimax(chess::Board& board, int depth, bool maximizingPlay, int alpha, int beta)
 {
+	auto now = std::chrono::steady_clock::now();
+	if (std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count() > m_timeLimitMillis)
+		return evaluateBoard(board);
+
 	uint64_t hash = board.zobrist();
 
 	auto it = m_transpositionTable.find(hash);
@@ -114,6 +123,15 @@ int MinMaxBot::minimax(chess::Board& board, int depth, bool maximizingPlay, int 
 // TO DO: Improve heuristic to make the bot smarter
 int MinMaxBot::evaluateBoard(const chess::Board& board)
 {
+	if (board.isGameOver().first == chess::GameResultReason::CHECKMATE)
+	{
+		return board.sideToMove() == chess::Color::WHITE ? -100000 : 100000;
+	}
+	if (board.isGameOver().first == chess::GameResultReason::STALEMATE)
+	{
+		return 0;
+	}
+
 	int score = 0;
 
 	// Runs through all squares of the board
@@ -139,5 +157,11 @@ int MinMaxBot::evaluateBoard(const chess::Board& board)
 		else
 			score -= value;
 	}
+
+	if (board.inCheck())
+	{
+		score += board.sideToMove() == chess::Color::WHITE ? -50 : 50;
+	}
+
 	return(board.sideToMove() == chess::Color::WHITE) ? score : -score; // Score doesn't return what I thought it would, will need to fix
 }
