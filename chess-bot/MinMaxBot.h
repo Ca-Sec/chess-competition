@@ -27,5 +27,5 @@ private:
 	std::unordered_map<uint64_t, TTEntry> m_transpositionTable;
 
 	std::chrono::steady_clock::time_point m_startTime;
-	int m_timeLimitMillis = 9750;
+	int m_timeLimitMillis = 9000;
 };
